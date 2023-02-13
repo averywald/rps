@@ -50,7 +50,7 @@ export default class PaperService {
         PaperService.arrangeIcons();
         PaperService.applyMouseEvents();
 
-        PaperService.project.selectAll(); // DEBUG
+        // PaperService.project.selectAll(); // DEBUG
     }
 
     private static arrangeIcons(): void {
@@ -72,7 +72,7 @@ export default class PaperService {
             /**
              * @todo ensure that the game state is ready to accept a weapon selection
              */
-            icon.onMouseDown = PaperService.selectWeapon;
+            icon.onClick = PaperService.selectWeapon;
         });
     }
 

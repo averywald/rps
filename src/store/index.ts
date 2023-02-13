@@ -1,6 +1,7 @@
-import Vuex, { Store } from 'vuex';
+import Vuex from 'vuex';
 import Weapon from '@/models/weapon.model';
 import Opponent from '@/models/opponent.model';
+import Outcome from '@/models/outcome.model';
 
 export default new Vuex.Store({
   state: {
@@ -9,74 +10,92 @@ export default new Vuex.Store({
       cpu: 0
     },
     bestOf: 3,
-    currentRound: {
-      number: 1,
-      playerChoice: Weapon.NONE,
-      cpuChoice: Weapon.NONE
+    currentRound: 1,
+    selection: {
+      player: Weapon.NONE,
+      cpu: Weapon.NONE
     },
     winner: Opponent.NONE
   },
   mutations: {
     playerChoice(state, weapon: Weapon) {
-      state.currentRound.playerChoice = weapon;
+      state.selection.player = weapon;
     },
-    cpuChoice(state, weapon) {
-      state.currentRound.cpuChoice = weapon;
+    cpuChoice(state, weapon: Weapon) {
+      state.selection.cpu = weapon;
     },
-    playerWon(state) {
-      state.score.player++;
-      state.currentRound.number++;
-      state.currentRound.playerChoice = Weapon.NONE;
-      state.currentRound.cpuChoice = Weapon.NONE;
+    playerScore(state, score: number) {
+      state.score.player = score;
     },
-    cpuWon(state) {
-      state.score.cpu++;
-      state.currentRound.number++;
-      state.currentRound.playerChoice = Weapon.NONE;
-      state.currentRound.cpuChoice = Weapon.NONE;
+    cpuScore(state, score: number) {
+      state.score.cpu = score;
     },
-    tie(state) {
-      state.currentRound.number++;
-      state.currentRound.playerChoice = Weapon.NONE;
-      state.currentRound.cpuChoice = Weapon.NONE;
+    nextRound(state, round: number) {
+      state.currentRound = round;
     },
-    reset(state) {
+    resetScore(state) {
       state.score = {
         player: 0,
         cpu: 0
       }
-      state.currentRound.number = 1;
+    },
+    resetRound(state) {
+      state.currentRound = 1;
+    },
+    resetWinner(state) {
       state.winner = Opponent.NONE;
     },
     setGameMode(state, bestOf: number) {
       state.bestOf = bestOf;
     },
-    sweetVictory(state, winner: Opponent) {
-      state.winner = winner;
+    sweetVictory(state, opponent: Opponent) {
+      state.winner = opponent;
     }
   },
-  // actions: {},
+  actions: { 
+    // apply delay on actions for "rock, paper, scissors, shoot!" animation
+    playerScored(context) {
+      setTimeout(() => {
+        context.commit('playerScore', this.getters['playerScore'] + 1);
+      }, 1000);
+    },
+    cpuScored(context) {
+      setTimeout(() => {
+        context.commit('cpuScore', this.getters['cpuScore'] + 1);
+      }, 1000);
+    },
+    nobodyScored(context) {
+      setTimeout(() => {
+        context.commit('nextRound', this.getters['currentRound'] + 1);
+      }, 1000);
+    },
+    reset(context) {
+      context.commit('resetScore');
+      context.commit('resetRound');
+      context.commit('resetWinner');
+    },
+    endGame(context, opponent: Opponent) {
+      context.commit('sweetVictory', opponent);
+    }
+  },
   getters: {
-    cpuScore(state) {
+    cpuScore(state): number {
       return state.score.cpu;
     },
-    playerScore(state) {
+    playerScore(state): number {
       return state.score.player;
     },
-    totalScore(state) {
-      return state.score;
+    currentRound(state): number {
+      return state.currentRound;
     },
-    currentRound(state) {
-      return state.currentRound.number;
-    },
-    bestOf(state) {
+    bestOf(state): number {
       return state.bestOf;
     },
     playerChoice(state): Weapon {
-      return state.currentRound.playerChoice;
+      return state.selection.player;
     },
     cpuChoice(state): Weapon {
-      return state.currentRound.cpuChoice;
+      return state.selection.cpu;
     },
     winner(state): Opponent {
       return state.winner;

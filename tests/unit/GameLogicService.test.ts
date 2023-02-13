@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals';
 
 import Weapon from '@/models/weapon.model';
-import Outcome from '@/models/outcomes.model';
+import Outcome from '@/models/outcome.model';
 
 import GameLogicService from '@/services/gameLogic.service';
 

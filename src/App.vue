@@ -12,7 +12,7 @@
       <PaperIcon class="icon"/>
       <ScissorIcon class="icon"/>
     </div>
-    <Button title="menu" v-on:click=""/>
+    <Button title="reset" v-on:click="emitReset"/>
   </div>
 </template>
 
@@ -26,6 +26,8 @@ import PaperIcon from '@/components/icons/Paper.vue';
 import ScissorIcon from '@/components/icons/Scissors.vue';
 
 import Button from '@/components/Button.vue';
+import { Gradient } from 'paper/dist/paper-core';
+import { emit } from 'process';
 
 @Options({
   props: {
@@ -61,18 +63,21 @@ export default class App extends Vue {
     return store.getters['currentRound'];
   }
 
-  beforeMount() {
-    GameLogicService.init();
+  private emitReset(): void {
+    GameLogicService.reset();
+  }
+
+  beforeMount(): void {
+    GameLogicService.init(5);
   }
 
   /**
    * wait for the DOM to load before initializing Paper.js service,
    * since it needs a Canvas element reference to bind to
    */
-  mounted() {
+  mounted(): void {
     let canvas = this.$refs.canvas as HTMLCanvasElement;
     let icons = Array.from(document.getElementsByClassName('icon'));
-
     PaperService.init(canvas, icons);
   }
 }
