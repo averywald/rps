@@ -5,6 +5,9 @@
       <h2>Player: {{ playerScore }}</h2>
       <h2>CPU: {{ cpuScore }}</h2>
     </div>
+    <div id="debug">
+      <h3>CPU: {{ cpuChoice }}</h3>
+    </div>
     <canvas ref="canvas">alt canvas txt</canvas>
     <div id="svgCache" style="display: none;">
       <!-- order of these should match Weapon enum order 😾 -->
@@ -59,6 +62,11 @@ export default class App extends Vue {
 
   get currentRound() {
     return store.getters['currentRound'];
+  }
+
+  // debug
+  get cpuChoice() {
+    return store.getters['cpuChoice'];
   }
 
   private emitReset(): void {

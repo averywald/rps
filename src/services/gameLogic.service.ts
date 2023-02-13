@@ -31,7 +31,7 @@ export default class GameLogicService {
      */
     public static init(bestOf: number = -1): void { 
         if (bestOf != -1 ) {
-            store.commit('setGameMode', bestOf);
+            store.dispatch('reset', bestOf);
         }
     }
 
@@ -45,17 +45,26 @@ export default class GameLogicService {
      * @param cpuChoice random weapon of choice
      */
     public static runRound(playerChoice: Weapon): void {
-        let cpuChoice = GameLogicService.selectCpuWeapon();
+        let cpuChoice = GameLogicService.randomWeapon();
+
         // update store, so Paper.js service can update the UI
-        store.commit('playerChoice', playerChoice);
-        store.commit('cpuChoice', cpuChoice);
+        store.dispatch('playerSelectedWeapon', playerChoice);
+        store.dispatch('cpuSelectedWeapon', cpuChoice);
 
         debugger;
 
         switch (GameLogicService.battle(playerChoice, cpuChoice)) {
-            case Outcome.WIN: store.dispatch('playerScored');
-            case Outcome.LOSS: store.dispatch('cpuScored');
-            case Outcome.TIE: store.dispatch('nobodyScored');
+            case Outcome.WIN: 
+                store.dispatch('playerScored');
+                break;
+            case 
+                Outcome.LOSS: store.dispatch('cpuScored');
+                break;
+            case 
+                Outcome.TIE: store.dispatch('nobodyScored');
+                break;
+            default: 
+                break;
         }
 
         // wait for animations to finish
@@ -83,8 +92,8 @@ export default class GameLogicService {
     /**
      * @returns randomly selected index, cast into Weapon enum
      */
-    private static selectCpuWeapon(): Weapon {
-        return Math.floor(Math.random() * 3) as Weapon;
+    private static randomWeapon(): Weapon {
+        return Math.floor(Math.random() * 2) + 1 as Weapon;
     }
 
     /**
