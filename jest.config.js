@@ -1,5 +1,4 @@
-const config = {
+module.exports = {
     verbose: true,
+    all: true
 };
-  
-module.exports = config

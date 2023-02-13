@@ -3,15 +3,18 @@ import GameLogicService from './gameLogic.service';
 import Weapon from '@/models/weapon.model';
 
 /**
- * @todo implement animations
- * @todo implement game stage layer
- * @todo implement instruction/announcement layer
+ * @todo implement animation layers
+ * - background fill: win/loss
+ * - hover spotlight
+ * - countdown?
  */
 export default class PaperService {
 
     private static project: paper.Project;
     private static canvas: HTMLCanvasElement;
     private static iconLayer: paper.Layer;
+    private static backgroundLayer: paper.Layer;
+    private static animationLayer: paper.Layer;
 
     /**
      *

@@ -1,84 +1,90 @@
 import Weapon from '@/models/weapon.model';
-import Outcome from '@/models/outcomes.model';
-import Score from '@/models/score.model';
+import Outcome from '@/models/outcomes.model'
 
 import store from '@/store';
 
 export default class GameLogicService {
-    private static totalScore: Score = store.getters['totalScore'];
-    private static currentRound: number;
-    private static bestOf: number;
-
     /**
-     * 
+     * checks to see if a winner has been determined, and the game should be reset
      * @returns if the set of rounds has been spent, or a player has majority wins
-     * 
-     * @todo check if a player has majority wins
      */
     public static isGameOver(): boolean {
         // check if rounds have been all played
-        return GameLogicService.currentRound == GameLogicService.bestOf;
+        if (store.getters['currentRound'] > store.getters['bestOf']) {
+            return true;
+        }
+
+        // check if someone has the majority wins needed
+        return store.getters['playerScore'] > store.getters['bestOf'] / 2
+            || store.getters['cpuScore'] > store.getters['bestOf'] / 2;
     }
 
     /**
      * Set up the initial game state;
      * can be used to reset the game, start a new one, etc.
      * 
-     * @param bestOf number of total rounds to play; default 3
+     * @param bestOf number of total rounds to play; default 3 (in store)
      */
     public static init(bestOf: number = -1): void { 
         if (bestOf != -1 ) {
             store.commit('setGameMode', bestOf);
         }
-        GameLogicService.bestOf = store.getters['bestOf']; // set game duration
-        GameLogicService.totalScore = store.getters['totalScore'];
-        GameLogicService.currentRound = store.getters['currentRound'];
     }
 
     /**
      * 
      * @param playerChoice weapon of choice
      * @param cpuChoice random weapon of choice
-     * 
-     * @todo emit CustomEvent for Vue to consume, when a winner is chosen
-     * @todo make CPU random weapon choice
      */
     public static runRound(playerChoice: Weapon): void {
         let cpuChoice = GameLogicService.selectCpuWeapon();
-        let outcome: Outcome = GameLogicService.battle(playerChoice, cpuChoice);
+        // update store, so Paper.js service can update the UI
+        store.commit('playerChoice', playerChoice);
+        store.commit('cpuChoice', cpuChoice);
 
-        if (outcome == Outcome.WIN) {
-            GameLogicService.totalScore.player++;
+        switch (GameLogicService.battle(playerChoice, cpuChoice)) {
+            case Outcome.WIN: store.commit('playerWon');
+            case Outcome.LOSS: store.commit('cpuWon');
+            case Outcome.TIE: store.commit('tie');
         }
 
-        if (outcome == Outcome.LOSS) {
-            GameLogicService.totalScore.cpu++;
+        if (GameLogicService.isGameOver()) {            
+            let alertString = '';
+            switch(GameLogicService.determineWinner()) {
+                case Outcome.WIN: alertString = 'Player Won!'
+                case Outcome.LOSS: alertString = 'CPU Won...'
+                case Outcome.TIE: alertString = 'Nobody Won!!!'
+            }
+            store.commit('reset'); // reset game state in store
         }
+    }
 
-        GameLogicService.currentRound++;
-        store.commit('updateScore', GameLogicService.totalScore)
-        // GameLogicService.updateScore(GameLogicService.totalScore);
-
-        if (GameLogicService.isGameOver()) {
-            // emit event to bubble to Vue?
+    private static determineWinner(): Outcome {
+        if (store.getters['playerScore'] == store.getters['cpuScore']) {
+            return Outcome.TIE;
         }
+        return store.getters['playerScore'] > store.getters['cpuScore']
+            ? Outcome.WIN
+            : Outcome.LOSS;
     }
 
     /**
      * @returns randomly selected index, cast into Weapon enum
      */
     private static selectCpuWeapon(): Weapon {
-        return Math.floor(Math.random() * 2) as Weapon;
+        return Math.floor(Math.random() * 2) + 1 as Weapon;
     }
 
     /**
      * @returns whether the player won, lost or tied
      */
     private static battle(playerChoice: Weapon, cpuChoice: Weapon): Outcome {
+        // debugger;
+
         if (playerChoice == cpuChoice) {
             return Outcome.TIE;
         }
         
-        return ((playerChoice - cpuChoice + 3) % 3) === 1 ? Outcome.WIN : Outcome.LOSS;
+        return ((playerChoice + 1) % 3) !== cpuChoice ? Outcome.WIN : Outcome.LOSS;
     }
 }

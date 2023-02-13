@@ -1,7 +1,7 @@
 <template>
   <div id="wrapper">
     <div id="dashboard">
-      <h2>Round: {{ currentRound + 1 }} / {{ bestOf }}</h2>
+      <h2>Round: {{ currentRound }} / {{ bestOf }}</h2>
       <h2>Player: {{ playerScore }}</h2>
       <h2>CPU: {{ cpuScore }}</h2>
     </div>
