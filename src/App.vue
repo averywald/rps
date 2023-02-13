@@ -1,6 +1,7 @@
 <template>
   <div id="wrapper">
     <div id="dashboard">
+      <h2>Round: {{ currentRound + 1 }} / {{ bestOf }}</h2>
       <h2>Player: {{ playerScore }}</h2>
       <h2>CPU: {{ cpuScore }}</h2>
     </div>
@@ -17,11 +18,9 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Score from '@/models/score.model';
-
+import store from './store';
 import PaperService from '@/services/paper.service';
 import GameLogicService from '@/services/gameLogic.service'
-
 import RockIcon from '@/components/icons/Rock.vue';
 import PaperIcon from '@/components/icons/Paper.vue';
 import ScissorIcon from '@/components/icons/Scissors.vue';
@@ -46,17 +45,20 @@ import Button from '@/components/Button.vue';
 export default class App extends Vue {
   msg!: string
 
-  private score: Score = {
-    player: 0,
-    cpu: 0
-  }
-
   get playerScore() {
-    return this.score.player;
+     return store.getters['playerScore'];
   }
 
   get cpuScore() {
-    return this.score.cpu;
+    return store.getters['cpuScore'];
+  }
+
+  get bestOf() {
+    return store.getters['bestOf'];
+  }
+
+  get currentRound() {
+    return store.getters['currentRound'];
   }
 
   beforeMount() {
@@ -72,11 +74,6 @@ export default class App extends Vue {
     let icons = Array.from(document.getElementsByClassName('icon'));
 
     PaperService.init(canvas, icons);
-
-    document.addEventListener('outcome', (event) => {
-      console.log(event);
-      this.score = GameLogicService.score();
-    });
   }
 }
 </script>
