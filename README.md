@@ -1,4 +1,8 @@
 # rps
+This is a small rock paper scissors app build with Vue and Paper.js
+
+## Check it out
+The app is deployed on [GitHub Pages](https://averywald.github.io/rps/)
 
 ## Project setup
 ```
