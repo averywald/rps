@@ -1,7 +1,6 @@
 import Vuex from 'vuex';
 import Weapon from '@/models/weapon.model';
 import Opponent from '@/models/opponent.model';
-import Outcome from '@/models/outcome.model';
 
 export default new Vuex.Store({
   state: {

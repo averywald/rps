@@ -26,8 +26,6 @@ import PaperIcon from '@/components/icons/Paper.vue';
 import ScissorIcon from '@/components/icons/Scissors.vue';
 
 import Button from '@/components/Button.vue';
-import { Gradient } from 'paper/dist/paper-core';
-import { emit } from 'process';
 
 @Options({
   props: {
