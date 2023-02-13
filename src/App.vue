@@ -69,10 +69,6 @@ export default class App extends Vue {
     return store.getters['cpuChoice'];
   }
 
-  private emitReset(): void {
-    GameLogicService.reset();
-  }
-
   beforeMount(): void {
     GameLogicService.init(5);
   }
@@ -85,6 +81,13 @@ export default class App extends Vue {
     let canvas = this.$refs.canvas as HTMLCanvasElement;
     let icons = Array.from(document.getElementsByClassName('icon'));
     PaperService.init(canvas, icons);
+  }
+
+  /**
+   * call service to reset game state
+   */
+  public emitReset(): void {
+    GameLogicService.reset();
   }
 }
 </script>

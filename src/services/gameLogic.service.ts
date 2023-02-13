@@ -5,38 +5,13 @@ import store from '@/store';
 
 export default class GameLogicService {
     /**
-     * checks to see if a winner has been determined, and the game should be reset
-     * @returns if the set of rounds has been spent, or a player has majority wins
-     */
-    public static isGameOver(): boolean {
-        const playerScore = store.getters['playerScore'];
-        const cpuScore = store.getters['cpuScore'];
-        const bestOf = store.getters['bestOf'];
-        const currentRound = store.getters['currentRound'];
-
-        // check if rounds have been all played
-        if (currentRound > bestOf) {
-            return true;
-        }
-        // check if someone has the majority wins needed
-        return playerScore > (bestOf / 2)
-            || cpuScore > (bestOf / 2);
-    }
-
-    /**
      * Set up the initial game state;
      * can be used to reset the game, start a new one, etc.
      * 
      * @param bestOf number of total rounds to play; default 3 (in store)
      */
-    public static init(bestOf: number = -1): void { 
-        if (bestOf != -1 ) {
-            store.dispatch('reset', bestOf);
-        }
-    }
-
-    public static reset(): void {
-        store.dispatch('reset');
+    public static init(bestOf: number): void { 
+        store.dispatch('reset', bestOf ? bestOf : 3);
     }
 
     /**
@@ -74,6 +49,32 @@ export default class GameLogicService {
                 GameLogicService.reset();
             }
         }, 1500);
+    }
+
+    /**
+     * checks to see if a winner has been determined, and the game should be reset
+     * @returns if the set of rounds has been spent, or a player has majority wins
+     */
+    public static isGameOver(): boolean {
+        const playerScore = store.getters['playerScore'];
+        const cpuScore = store.getters['cpuScore'];
+        const bestOf = store.getters['bestOf'];
+        const currentRound = store.getters['currentRound'];
+
+        // check if rounds have been all played
+        if (currentRound > bestOf) {
+            return true;
+        }
+        // check if someone has the majority wins needed
+        return playerScore > (bestOf / 2)
+            || cpuScore > (bestOf / 2);
+    }
+
+    /**
+     * wipe the vuex store game state clean
+     */
+    public static reset(): void {
+        store.dispatch('reset');
     }
 
     /**

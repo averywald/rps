@@ -122,7 +122,7 @@ export default new Vuex.Store({
       context.commit('resetRound');
       context.commit('resetWinner');
       context.commit('resetWeaponSelection');
-      context.commit('setBestOf', bestOf ? bestOf : 3);
+      context.commit('setBestOf', bestOf);
     },
     endGame(context, opponent: Opponent) {
       context.commit('setWinner', opponent);
