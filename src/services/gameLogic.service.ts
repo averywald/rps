@@ -1,20 +1,15 @@
 import Weapon from '@/models/weapon.model';
 import Outcome from '@/models/outcomes.model';
+import Score from '@/models/score.model';
 
 export default class GameLogicService {
-    private static score = {
-        player: 0,
-        cpu: 0
-    }
-    private static roundsPlayed: number = 0;
+
+    private static totalScore: Score
+    private static roundsPlayed: number;
     private static bestOf: number;
 
-    public static playerScore(): number {
-        return GameLogicService.score.player;
-    }
-
-    public static cpuScore(): number {
-        return GameLogicService.score.cpu;
+    public static score(): Score {
+        return GameLogicService.totalScore;
     }
 
     public static round(): number {
@@ -32,8 +27,21 @@ export default class GameLogicService {
         return GameLogicService.roundsPlayed == GameLogicService.bestOf;
     }
 
-    public static init(bestOf: number = 3): void { 
+    /**
+     * Set up the initial game state;
+     * can be used to reset the game, start a new one, etc.
+     * 
+     * @param bestOf number of total rounds to play; default 3
+     */
+    public static init(bestOf: number = 3): Score { 
         GameLogicService.bestOf = bestOf; // set game duration
+        GameLogicService.totalScore = {
+            player: 0,
+            cpu: 0
+        };
+        GameLogicService.roundsPlayed = 0;
+
+        return GameLogicService.score();
     }
 
     /**
@@ -42,23 +50,37 @@ export default class GameLogicService {
      * @param cpuChoice random weapon of choice
      * 
      * @todo emit CustomEvent for Vue to consume, when a winner is chosen
+     * @todo make CPU random weapon choice
      */
-    public static runRound(playerChoice: Weapon, cpuChoice: Weapon): void {
+    public static runRound(playerChoice: Weapon): void {
+        let cpuChoice = GameLogicService.selectCpuWeapon();
         let outcome: Outcome = GameLogicService.battle(playerChoice, cpuChoice);
 
         if (outcome == Outcome.WIN) {
-            GameLogicService.score.player++;
+            GameLogicService.totalScore.player++;
         }
 
         if (outcome == Outcome.LOSS) {
-            GameLogicService.score.cpu++;
+            GameLogicService.totalScore.cpu++;
         }
 
         GameLogicService.roundsPlayed++;
 
+        document.dispatchEvent(new CustomEvent('outcome', {
+            // use to attach data as prop
+            // detail: {} 
+        }));
+
         if (GameLogicService.isGameOver()) {
             // emit event to bubble to Vue?
         }
+    }
+
+    /**
+     * @returns randomly selected index, cast into Weapon enum
+     */
+    private static selectCpuWeapon(): Weapon {
+        return Math.floor(Math.random() * 2) as Weapon;
     }
 
     /**
@@ -71,6 +93,4 @@ export default class GameLogicService {
         
         return ((playerChoice - cpuChoice + 3) % 3) === 1 ? Outcome.WIN : Outcome.LOSS;
     }
-
-    // private static determineWinner(): boolean { }
 }
