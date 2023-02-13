@@ -28,7 +28,8 @@ interface IStoreState {
  * @param context the vuex dispatch context to call mutations by
  */
 function refreshRound(context: ActionContext<IStoreState, IStoreState>, round: number): void {
-  context.commit('resetWeaponSelection');
+  context.commit('setPlayerWeaponSelection', Weapon.NONE);
+  context.commit('setCpuWeaponSelection', Weapon.NONE);
   context.commit('setCurrentRound', round);
 }
 
@@ -80,12 +81,6 @@ export default new Vuex.Store({
         player: 0,
         cpu: 0
       }
-    },
-    resetRound(state) {
-      state.currentRound = 1;
-    },
-    resetWinner(state) {
-      state.winner = Opponent.NONE;
     }
   },
   actions: { 
@@ -119,10 +114,9 @@ export default new Vuex.Store({
     },
     reset(context, bestOf: number) {
       context.commit('resetScore');
-      context.commit('resetRound');
-      context.commit('resetWinner');
-      context.commit('resetWeaponSelection');
+      context.commit('setWinner', Opponent.NONE);
       context.commit('setBestOf', bestOf);
+      refreshRound(context, 1);
     },
     endGame(context, opponent: Opponent) {
       context.commit('setWinner', opponent);

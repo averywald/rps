@@ -5,6 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "deploy": "./scripts/deploy.sh",
     "test": "vue-cli-service test",
     "test:unit": "vue-cli-service test:unit"
   },

@@ -4,13 +4,18 @@ import Opponent from '@/models/opponent.model';
 import store from '@/store';
 
 export default class GameLogicService {
+
+    private static getBestOf(): number {
+        return store.getters['bestOf'];
+    }
+
     /**
      * Set up the initial game state;
      * can be used to reset the game, start a new one, etc.
      * 
      * @param bestOf number of total rounds to play; default 3 (in store)
      */
-    public static init(bestOf: number): void { 
+    public static init(bestOf: number | null): void { 
         store.dispatch('reset', bestOf ? bestOf : 3);
     }
 
@@ -26,17 +31,17 @@ export default class GameLogicService {
         store.dispatch('playerSelectedWeapon', playerChoice);
         store.dispatch('cpuSelectedWeapon', cpuChoice);
 
-        debugger;
+        // debugger;
 
         switch (GameLogicService.battle(playerChoice, cpuChoice)) {
             case Outcome.WIN: 
                 store.dispatch('playerScored');
                 break;
-            case 
-                Outcome.LOSS: store.dispatch('cpuScored');
+            case Outcome.LOSS: 
+                store.dispatch('cpuScored');
                 break;
-            case 
-                Outcome.TIE: store.dispatch('nobodyScored');
+            case Outcome.TIE: 
+                store.dispatch('nobodyScored');
                 break;
             default: 
                 break;
@@ -46,7 +51,7 @@ export default class GameLogicService {
         setTimeout(() => {
             if (GameLogicService.isGameOver()) {            
                 store.dispatch('endGame', GameLogicService.determineWinner());
-                GameLogicService.reset();
+                GameLogicService.init(GameLogicService.getBestOf());
             }
         }, 1500);
     }
@@ -71,13 +76,6 @@ export default class GameLogicService {
     }
 
     /**
-     * wipe the vuex store game state clean
-     */
-    public static reset(): void {
-        store.dispatch('reset');
-    }
-
-    /**
      * @returns whether the player won or not
      */
     private static determineWinner(): Opponent {
@@ -94,7 +92,7 @@ export default class GameLogicService {
      * @returns randomly selected index, cast into Weapon enum
      */
     private static randomWeapon(): Weapon {
-        return Math.floor(Math.random() * 2) + 1 as Weapon;
+        return Math.round((Math.random() * 20) / 10) as Weapon;
     }
 
     /**

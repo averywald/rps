@@ -87,7 +87,7 @@ export default class App extends Vue {
    * call service to reset game state
    */
   public emitReset(): void {
-    GameLogicService.reset();
+    GameLogicService.init(this.bestOf);
   }
 }
 </script>
