@@ -77,6 +77,8 @@ export default class PaperService {
     private static applyMouseEvents(): void {
         PaperService.project.activeLayer.children.forEach(icon => {
             icon.onClick = PaperService.selectWeapon;
+            icon.onMouseEnter = PaperService.grow;
+            icon.onMouseLeave = PaperService.shrink;
         });
     }
 
@@ -91,25 +93,37 @@ export default class PaperService {
     private static selectWeapon(event: paper.MouseEvent): void {
         let item = PaperService.getIconById(event.target.id);
         if (item) {
-            // 
+            item.tween({
+                fill: 'rgb(1, 0, 0)'
+            }, {
+                easing: 'easeInOutCubic',
+                duration: 2000
+            });
             GameLogicService.runRound(Weapon[item.name as keyof typeof Weapon]);
         }
     }
 
-    // private static rotateIcon(event: paper.MouseEvent): void {
-    //     let item = PaperService.getIconById(event.target.id);
+    private static grow(event: paper.MouseEvent): void {
+        let item = PaperService.getIconById(event.target.id);
+        if (item) {
+            item.tween({
+                scaling: 1.1,
+            }, {
+                easing: 'easeInOutCubic',
+                duration: 2000
+            });
+        }
+    }
 
-    //     if (item) {
-    //         item.onFrame = (item: paper.Item, event: paper.Event) => PaperService.rotate;
-    //         setTimeout(PaperService.removeAnimation, 3000, item);
-    //     }
-    // }
-
-    // private static removeAnimation(item: paper.Item) {
-    //     item.onFrame = null;
-    // }
-
-    // private static rotate(item: paper.Item): void {        
-    //     item.rotate(3);
-    // }
+    private static shrink(event: paper.MouseEvent): void {
+        let item = PaperService.getIconById(event.target.id);
+        if (item) {
+            item.tween({
+                scaling: 0.9,
+            }, {
+                easing: 'easeInOutCubic',
+                duration: 2000
+            });
+        }
+    }
 }
