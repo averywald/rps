@@ -1,4 +1,4 @@
-import Vuex, { ActionContext } from 'vuex';
+import Vuex, { ActionContext, Store } from 'vuex';
 import Weapon from '@/models/weapon.model';
 import Opponent from '@/models/opponent.model';
 
@@ -94,22 +94,18 @@ export default new Vuex.Store({
     playerScored(context) {
       setTimeout(() => {
         context.commit('setPlayerScore', this.getters['playerScore'] + 1);
-        const round = this.getters['currentRound'];
-        refreshRound(context, round + 1);
+        refreshRound(context, this.getters['currentRound'] + 1);
       }, 1000);
     },
     cpuScored(context) {
       setTimeout(() => {
         context.commit('setCpuScore', this.getters['cpuScore'] + 1);
-        const round = this.getters['currentRound'];
-        refreshRound(context, round + 1);
+        refreshRound(context, this.getters['currentRound'] + 1);
       }, 1000);
     },
     nobodyScored(context) {
       setTimeout(() => {
-        context.commit('setCurrentRound', this.getters['currentRound'] + 1);
-        const round = this.getters['currentRound'];
-        refreshRound(context, round + 1);
+        refreshRound(context, this.getters['currentRound'] + 1);
       }, 1000);
     },
     reset(context, bestOf: number) {
