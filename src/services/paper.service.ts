@@ -13,8 +13,8 @@ export default class PaperService {
     private static project: paper.Project;
     private static canvas: HTMLCanvasElement;
     private static iconLayer: paper.Layer;
-    private static backgroundLayer: paper.Layer;
-    private static animationLayer: paper.Layer;
+    // private static backgroundLayer: paper.Layer;
+    // private static animationLayer: paper.Layer;
 
     /**
      * Sets up the service's Paper.js project on the provided canvas
@@ -27,7 +27,13 @@ export default class PaperService {
         PaperService.project = new Paper.Project(PaperService.canvas);
 
         let iconlayer = new Paper.Layer();
-        PaperService.iconLayer = iconlayer; // assign to prop for easy reference
+        // let backgroundLayer = new Paper.Layer();
+        // let animationLayer = new Paper.Layer();
+
+        // assign to prop for easy reference
+        // PaperService.backgroundLayer = backgroundLayer;
+        // PaperService.animationLayer = animationLayer;
+        PaperService.iconLayer = iconlayer;
 
         items.forEach((item, index) => {
             let svg = item as SVGElement;
@@ -41,6 +47,10 @@ export default class PaperService {
 
         // PaperService.project.selectAll(); // DEBUG
     }
+
+    // private static setBackground(r: number, g: number, b: number): void {
+    //     // PaperService.backgroundLayer
+    // }
 
     /**
      *
@@ -60,7 +70,7 @@ export default class PaperService {
 
         PaperService.iconLayer.children.forEach(icon => {
             icon.scale(0.2); // shrink icons to fit page
-            icon.fillColor = new Paper.Color(0, 0, 0); // make them black
+            icon.fillColor = new Paper.Color(0.5, 0.5, 0.5) // make them grey
             // place icon in the center of its respective 3rd
             icon.position =  new Paper.Point(i - (thirdWidth / 2), PaperService.canvas.height / 2);
             i += thirdWidth; // move "paintbrush" to new 3rd of canvas
@@ -109,7 +119,7 @@ export default class PaperService {
         if (item) {
             item.tween({
                 scaling: 1.1,
-                'style.fillColor': new Paper.Color(0.9, 0.9, 0.9)
+                'style.fillColor': new Paper.Color(0, 0, 0) // black
             }, {
                 easing: 'easeInCubic',
                 duration: 200
@@ -122,7 +132,7 @@ export default class PaperService {
         if (item) {
             item.tween({
                 scaling: 0.9,
-                'style.fillColor': new Paper.Color(0, 0, 0)
+                'style.fillColor': new Paper.Color(0.5, 0.5, 0.5)
             }, {
                 easing: 'easeInCubic',
                 duration: 200
