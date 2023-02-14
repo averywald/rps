@@ -5,10 +5,6 @@ import store from '@/store';
 
 export default class GameLogicService {
 
-    private static getBestOf(): number {
-        return store.getters['bestOf'];
-    }
-
     /**
      * Set up the initial game state;
      * can be used to reset the game, start a new one, etc.
@@ -16,7 +12,7 @@ export default class GameLogicService {
      * @param bestOf number of total rounds to play; default 3 (in store)
      */
     public static init(bestOf: number | null): void { 
-        store.dispatch('reset', bestOf ? bestOf : 3);
+        store.dispatch('reset', bestOf ? bestOf : store.getters['bestOf']);
     }
 
     /**
@@ -25,13 +21,12 @@ export default class GameLogicService {
      * @param cpuChoice random weapon of choice
      */
     public static runRound(playerChoice: Weapon): void {
-        let cpuChoice = GameLogicService.randomWeapon();
+        const bestOf = store.getters['bestOf'];
+        const cpuChoice = GameLogicService.randomWeapon();
 
         // update store, so Paper.js service can update the UI
         store.dispatch('playerSelectedWeapon', playerChoice);
         store.dispatch('cpuSelectedWeapon', cpuChoice);
-
-        // debugger;
 
         switch (GameLogicService.battle(playerChoice, cpuChoice)) {
             case Outcome.WIN: 
@@ -51,7 +46,7 @@ export default class GameLogicService {
         setTimeout(() => {
             if (GameLogicService.isGameOver()) {            
                 store.dispatch('endGame', GameLogicService.determineWinner());
-                GameLogicService.init(GameLogicService.getBestOf());
+                GameLogicService.init(bestOf);
             }
         }, 1500);
     }
@@ -66,13 +61,18 @@ export default class GameLogicService {
         const bestOf = store.getters['bestOf'];
         const currentRound = store.getters['currentRound'];
 
-        // check if rounds have been all played
-        if (currentRound > bestOf) {
-            return true;
+        // check not in "forever mode"
+        if (bestOf != -1) {
+            // check if rounds have been all played
+            if (currentRound > bestOf) {
+                return true;
+            }
+            // check if someone has the majority wins needed
+            return playerScore > (bestOf / 2)
+                || cpuScore > (bestOf / 2);
         }
-        // check if someone has the majority wins needed
-        return playerScore > (bestOf / 2)
-            || cpuScore > (bestOf / 2);
+
+        return false;
     }
 
     /**

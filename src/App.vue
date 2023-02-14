@@ -1,7 +1,8 @@
 <template>
   <div id="wrapper">
     <div id="dashboard">
-      <h2>Round: {{ currentRound }} / {{ bestOf }}</h2>
+      <h2 v-if="bestOf != -1">Round: {{ currentRound }} / {{ bestOf }}</h2>
+      <h2 v-else>Free</h2>
       <h2>Player: {{ playerScore }}</h2>
       <h2>CPU: {{ cpuScore }}</h2>
     </div>
@@ -15,7 +16,7 @@
       <PaperIcon class="icon"/>
       <ScissorIcon class="icon"/>
     </div>
-    <Button title="reset" v-on:click="emitReset"/>
+    <Menu/>
   </div>
 </template>
 
@@ -27,18 +28,14 @@ import GameLogicService from '@/services/gameLogic.service'
 import RockIcon from '@/components/icons/Rock.vue';
 import PaperIcon from '@/components/icons/Paper.vue';
 import ScissorIcon from '@/components/icons/Scissors.vue';
-
-import Button from '@/components/Button.vue';
+import Menu from '@/components/Menu.vue';
 
 @Options({
-  props: {
-    msg: String
-  },
   components: {
     RockIcon,
     PaperIcon,
     ScissorIcon,
-    Button
+    Menu,
   }
 })
 /**
@@ -46,7 +43,7 @@ import Button from '@/components/Button.vue';
  * @todo implement menu, button to open, etc.
  */
 export default class App extends Vue {
-  msg!: string
+  private menuOpen: boolean = false;
 
   get playerScore() {
      return store.getters['playerScore'];
@@ -81,13 +78,6 @@ export default class App extends Vue {
     let canvas = this.$refs.canvas as HTMLCanvasElement;
     let icons = Array.from(document.getElementsByClassName('icon'));
     PaperService.init(canvas, icons);
-  }
-
-  /**
-   * call service to reset game state
-   */
-  public emitReset(): void {
-    GameLogicService.init(this.bestOf);
   }
 }
 </script>

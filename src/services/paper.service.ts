@@ -79,6 +79,7 @@ export default class PaperService {
             icon.onClick = PaperService.selectWeapon;
             icon.onMouseEnter = PaperService.grow;
             icon.onMouseLeave = PaperService.shrink;
+            // icon.onMou
         });
     }
 
@@ -94,7 +95,7 @@ export default class PaperService {
         let item = PaperService.getIconById(event.target.id);
         if (item) {
             item.tween({
-                fill: 'rgb(1, 0, 0)'
+                'style.fillColor': new Paper.Color(1, 0, 0)
             }, {
                 easing: 'easeInOutCubic',
                 duration: 2000
@@ -108,9 +109,10 @@ export default class PaperService {
         if (item) {
             item.tween({
                 scaling: 1.1,
+                'style.fillColor': new Paper.Color(0.9, 0.9, 0.9)
             }, {
-                easing: 'easeInOutCubic',
-                duration: 2000
+                easing: 'easeInCubic',
+                duration: 200
             });
         }
     }
@@ -120,9 +122,10 @@ export default class PaperService {
         if (item) {
             item.tween({
                 scaling: 0.9,
+                'style.fillColor': new Paper.Color(0, 0, 0)
             }, {
-                easing: 'easeInOutCubic',
-                duration: 2000
+                easing: 'easeInCubic',
+                duration: 200
             });
         }
     }

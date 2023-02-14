@@ -1,6 +1,6 @@
 <template>
     <button>
-        {{ text }}
+        <img id="menu-icon" src="@/assets/menu-svgrepo-com.svg"/>
     </button>
   </template>
   
@@ -8,18 +8,9 @@
   import { Options, Vue } from 'vue-class-component';
   
   @Options({
-    props: {
-      title: String
-    },
     components: {}
   })
-  export default class Button extends Vue {
-    title!: string
-
-    get text() {
-        return this.title;
-    }
-  }
+  export default class MenuButton extends Vue {}
   </script>
   
   <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -29,6 +20,12 @@
     flex-direction: column;
     margin: 1vw;
     padding: 1vw;
+    width: fit-content; 
+  }
+
+  img#menu-icon {
+    width: 3vw;
+    height: 3vw;
   }
   </style>
   
